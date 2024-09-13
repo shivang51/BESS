@@ -21,6 +21,8 @@ namespace Bess::Gl {
         glm::vec3 position;
         glm::vec4 color;
         glm::vec2 texCoord;
+        glm::vec4 borderColor;
+        glm::vec4 borderSize;
         glm::vec4 borderRadius;
         glm::vec2 size;
         int id;

@@ -124,6 +124,8 @@ namespace Bess::Renderer2D {
 
         static void drawQuad(const glm::vec3 &pos, const glm::vec2 &size,
                              const glm::vec4 &color, int id, float angle,
+                             const glm::vec4 &borderColor = {0.f, 0.f, 0.f, 0.f},
+                             const glm::vec4 &borderSize = {0.f, 0.f, 0.f, 0.f},
                              const glm::vec4 &borderRadius = {0.f, 0.f, 0.f, 0.f});
 
         static QuadBezierCurvePoints generateQuadBezierPoints(const glm::vec2 &prevPoint, const glm::vec2 &joinPoint, const glm::vec2 &nextPoint, float curveRadius);
