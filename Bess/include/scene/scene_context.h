@@ -33,5 +33,25 @@ namespace Bess::Scene {
         glm::vec2 m_size;
         std::queue<Events::Event> m_events;
         std::vector<std::shared_ptr<Entity>> m_entities;
+        std::unordered_map<int, std::shared_ptr<Entity>> m_renderIdToEntity;
+
+      private: // event handlers
+        void handleMouseButton(const Events::MouseButtonEventData &data);
+        void handleMouseMove(const Events::MouseMoveEventData &data);
+        void handleMouseWheel(const Events::MouseWheelEventData &data);
+        void handleKeyPress(const Events::KeyPressEventData &data);
+        void handleKeyRelease(const Events::KeyReleaseEventData &data);
+        void handleMouseEnter(const Events::MouseEnterEventData &data);
+        void handleMouseLeave(const Events::MouseLeaveEventData &data);
+        void handleResize(const Events::ResizeEventData &data);
+
+        // mouse button event handlers
+        void handleLeftMouseButton(const Events::MouseButtonEventData &data);
+        void handleRightMouseButton(const Events::MouseButtonEventData &data);
+        void handleMiddleMouseButton(const Events::MouseButtonEventData &data);
+
+      private:
+        // gets entity at given pos
+        std::shared_ptr<Entity> getEntityAt(const glm::vec2 &pos);
     };
 } // namespace Bess::Scene

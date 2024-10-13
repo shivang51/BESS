@@ -7,7 +7,7 @@ namespace Bess::Scene::Events {
     class Event {
       public:
         Event() = default;
-        Event(EventType type, const std::any &data);
+        Event(const EventType type, const std::any &data);
         ~Event();
 
         Event(const Event &&other);

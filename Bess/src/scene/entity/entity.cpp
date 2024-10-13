@@ -10,26 +10,25 @@ namespace Bess::Scene {
     void Entity::update() {
         while (!m_events.empty()) {
             const auto &evt = m_events.front();
+            // Skiped events
+            if (evt.getType() == Events::EventType::resize) {
+                m_events.pop();
+                continue;
+            }
 
-            switch (evt.getType()) {
-            case Events::EventType::mouseButton: {
-            } break;
-            case Events::EventType::mouseMove: {
-            } break;
-            case Events::EventType::mouseWheel: {
-            } break;
-            case Events::EventType::keyPress: {
-            } break;
-            case Events::EventType::keyRelease: {
-            } break;
-            case Events::EventType::mouseEnter: {
-            } break;
-            case Events::EventType::mouseLeave: {
-            } break;
-            case Events::EventType::mouse:
+            for (auto &cb : m_eventListeners[evt.getType()]) {
+                cb(evt.getData<Events::EventData>());
             }
 
             m_events.pop();
         }
+    }
+
+    int Entity::getRenderId() const {
+        return m_renderId;
+    }
+
+    bool Entity::isEmptyEntity() const {
+        return m_renderId < 0;
     }
 } // namespace Bess::Scene

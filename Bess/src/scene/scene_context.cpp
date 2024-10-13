@@ -1,6 +1,10 @@
 #include "scene/scene_context.h"
+#include "scene/entity/entity.h"
+#include "scene/events/entity_event.h"
 #include "scene/events/event_type.h"
 #include "settings/viewport_theme.h"
+
+#include "scene/entity/empty_entity.h"
 
 namespace Bess::Scene {
 
@@ -15,6 +19,8 @@ namespace Bess::Scene {
         m_framebuffer = std::make_unique<Gl::FrameBuffer>(800, 600, attachments);
 
         m_events = {};
+
+        m_renderIdToEntity = {};
     }
 
     unsigned int SceneContext::getTextureId() {
@@ -56,24 +62,36 @@ namespace Bess::Scene {
 
             switch (evt.getType()) {
             case Events::EventType::mouseButton: {
+                const auto &data = evt.getData<Events::MouseButtonEventData>();
+                handleMouseButton(data);
             } break;
             case Events::EventType::mouseMove: {
+                const auto &data = evt.getData<Events::MouseMoveEventData>();
+                handleMouseMove(data);
             } break;
             case Events::EventType::mouseWheel: {
+                const auto &data = evt.getData<Events::MouseWheelEventData>();
+                handleMouseWheel(data);
             } break;
             case Events::EventType::keyPress: {
+                const auto &data = evt.getData<Events::KeyPressEventData>();
+                handleKeyPress(data);
             } break;
             case Events::EventType::keyRelease: {
+                const auto &data = evt.getData<Events::KeyReleaseEventData>();
+                handleKeyRelease(data);
             } break;
             case Events::EventType::mouseEnter: {
+                const auto &data = evt.getData<Events::MouseEnterEventData>();
+                handleMouseEnter(data);
             } break;
             case Events::EventType::mouseLeave: {
+                const auto &data = evt.getData<Events::MouseLeaveEventData>();
+                handleMouseLeave(data);
             } break;
             case Events::EventType::resize: {
                 const auto &data = evt.getData<Events::ResizeEventData>();
-                m_size = data.size;
-                m_msaaFramebuffer->resize(m_size.x, m_size.y);
-                m_framebuffer->resize(m_size.x, m_size.y);
+                handleResize(data);
             } break;
             }
 
@@ -97,4 +115,105 @@ namespace Bess::Scene {
         m_events.push(evt);
     }
 
+    void SceneContext::handleMouseButton(const Events::MouseButtonEventData &data) {
+        if (data.button == Events::MouseButton::left) {
+            handleLeftMouseButton(data);
+        } else if (data.button == Events::MouseButton::right) {
+            handleRightMouseButton(data);
+        } else if (data.button == Events::MouseButton::middle) {
+            handleMiddleMouseButton(data);
+        }
+    }
+
+    void SceneContext::handleLeftMouseButton(const Events::MouseButtonEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+
+        // if event was not on entity
+        if (data.pressed) {
+        } else {
+        }
+    }
+
+    void SceneContext::handleRightMouseButton(const Events::MouseButtonEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+
+        // if event was not on entity
+        if (data.pressed) {
+        } else {
+        }
+    }
+
+    void SceneContext::handleMiddleMouseButton(const Events::MouseButtonEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+
+        // if event was not on entity
+        if (data.pressed) {
+        } else {
+        }
+    }
+
+    void SceneContext::handleMouseMove(const Events::MouseMoveEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+    }
+
+    void SceneContext::handleMouseWheel(const Events::MouseWheelEventData &data) {
+    }
+
+    void SceneContext::handleKeyPress(const Events::KeyPressEventData &data) {
+    }
+
+    void SceneContext::handleKeyRelease(const Events::KeyReleaseEventData &data) {
+    }
+
+    void SceneContext::handleMouseEnter(const Events::MouseEnterEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+    }
+
+    void SceneContext::handleMouseLeave(const Events::MouseLeaveEventData &data) {
+        auto entity = getEntityAt(data.position);
+
+        if (!entity->isEmptyEntity()) {
+            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            return;
+        }
+    }
+
+    void SceneContext::handleResize(const Events::ResizeEventData &data) {
+        m_size = data.size;
+        m_msaaFramebuffer->resize(m_size.x, m_size.y);
+        m_framebuffer->resize(m_size.x, m_size.y);
+    }
+
+    std::shared_ptr<Entity> SceneContext::getEntityAt(const glm::vec2 &pos) {
+        int renderId = m_framebuffer->readIntFromColAttachment(1, pos.x, pos.y);
+        if (renderId < 0) {
+            return Entities::EmptyEntity::getInstance();
+        }
+        return m_renderIdToEntity.at(renderId);
+    }
 } // namespace Bess::Scene
