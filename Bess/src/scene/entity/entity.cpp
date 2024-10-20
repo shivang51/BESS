@@ -24,7 +24,7 @@ namespace Bess::Scene {
             }
 
             for (auto &cb : m_eventListeners[evt.getType()]) {
-                cb(evt.getData<Events::EventData>());
+                cb(evt.getData<Events::MouseButtonEventData>());
             }
 
             m_events.pop();

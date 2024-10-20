@@ -24,17 +24,23 @@ namespace Bess::Pages {
       public:
         DummyEntity() : Scene::Entity() {
             m_renderId = 0;
+
+            addEventListener<Scene::Events::EventType::mouseButton>([](const Scene::Events::EventData &data) {
+                std::cout << "Mouse Clicked" << std::endl;
+            });
+
+            m_transform.setPosition({0.f, 0.f, 0.f});
+            m_transform.setScale({10.f, 10.f});
         }
 
         ~DummyEntity() override = default;
 
         void render() override {
-            Renderer2D::Renderer::quad({0.f, 0.f, 0.f}, {10.f, 10.f}, {1.f, 0.f, 0.f, 1.f}, -1.f);
+            Renderer2D::Renderer::quad(m_transform.getPosition(), m_transform.getScale(), {1.f, 0.f, 0.f, 1.f}, m_renderId);
         }
     };
 
-    std::shared_ptr<Page>
-    MainPage::getInstance(const std::shared_ptr<Window> &parentWindow) {
+    std::shared_ptr<Page> MainPage::getInstance(const std::shared_ptr<Window> &parentWindow) {
         static auto instance = std::make_shared<MainPage>(parentWindow);
         return instance;
     }

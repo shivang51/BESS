@@ -134,7 +134,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
 
@@ -148,7 +148,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
 
@@ -162,7 +162,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
 
@@ -176,7 +176,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
     }
@@ -194,7 +194,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
     }
@@ -203,7 +203,7 @@ namespace Bess::Scene {
         auto entity = getEntityAt(data.position);
 
         if (!entity->isEmptyEntity()) {
-            entity->onEvent(Events::EntityEvent::fromEventData(data));
+            entity->onEvent(Events::EntityEvent::fromEntEventData(data));
             return;
         }
     }
