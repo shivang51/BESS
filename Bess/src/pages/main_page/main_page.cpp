@@ -23,20 +23,18 @@ namespace Bess::Pages {
     class DummyEntity : public Scene::Entity {
       public:
         DummyEntity() : Scene::Entity() {
-            m_renderId = 0;
-
-            addEventListener<Scene::Events::EventType::mouseButton>([](const Scene::Events::EventData &data) {
-                std::cout << "Mouse Clicked" << std::endl;
-            });
+            // addEventListener<Scene::Events::EventType::mouseButton>([](const Scene::Events::EventData &data) {
+            //     std::cout << "Mouse Clicked" << std::endl;
+            // });
 
             m_transform.setPosition({0.f, 0.f, 0.f});
-            m_transform.setScale({10.f, 10.f});
+            m_transform.setScale({100.f, 100.f});
         }
 
         ~DummyEntity() override = default;
 
         void render() override {
-            Renderer2D::Renderer::quad(m_transform.getPosition(), m_transform.getScale(), {1.f, 0.f, 0.f, 1.f}, m_renderId);
+            Renderer2D::Renderer::quad(m_transform.getPosition(), m_transform.getScale(), {1.f, 0.f, 0.f, 1.f}, getRenderId());
         }
     };
 
@@ -58,13 +56,14 @@ namespace Bess::Pages {
         m_parentWindow = parentWindow;
 
         UI::UIMain::state.cameraZoom = Camera::defaultZoom;
-        m_sceneContext = std::make_shared<Scene::SceneContext>();
-        m_sceneContext->init();
+
+        m_state = MainPageState::getInstance();
+        m_sceneContext = m_state->getSceneContext();
+
         auto ent = std::make_shared<DummyEntity>();
         m_sceneContext->addEntity(ent);
 
         UI::UIMain::state.viewportTexture = m_sceneContext->getTextureId();
-        m_state = MainPageState::getInstance();
     }
 
     void MainPage::draw() {
@@ -317,7 +316,7 @@ namespace Bess::Pages {
         e.type = Simulator::Components::ComponentEventType::leftClick;
         e.pos = getNVPMousePos();
 
-        Simulator::ComponentsManager::components[cid]->onEvent(e);
+        // Simulator::ComponentsManager::components[cid]->onEvent(e);
     }
 
     void MainPage::onRightMouse(bool pressed) {
@@ -346,7 +345,7 @@ namespace Bess::Pages {
         e.type = Simulator::Components::ComponentEventType::rightClick;
         e.pos = getNVPMousePos();
 
-        Simulator::ComponentsManager::components[cid]->onEvent(e);
+        // Simulator::ComponentsManager::components[cid]->onEvent(e);
     }
 
     void MainPage::onMiddleMouse(bool pressed) {
@@ -380,7 +379,7 @@ namespace Bess::Pages {
                     prevHoveredId);
                 Simulator::Components::ComponentEventData e;
                 e.type = Simulator::Components::ComponentEventType::mouseLeave;
-                Simulator::ComponentsManager::components[cid]->onEvent(e);
+                // Simulator::ComponentsManager::components[cid]->onEvent(e);
             }
 
             prevHoveredId = hoveredId;
@@ -389,7 +388,7 @@ namespace Bess::Pages {
                 auto &cid = Simulator::ComponentsManager::renderIdToCid(hoveredId);
                 Simulator::Components::ComponentEventData e;
                 e.type = Simulator::Components::ComponentEventType::mouseEnter;
-                Simulator::ComponentsManager::components[cid]->onEvent(e);
+                // Simulator::ComponentsManager::components[cid]->onEvent(e);
             }
         }
 

@@ -7,11 +7,12 @@
 #include <queue>
 
 namespace Bess::Scene {
-    typedef std::function<void(const Events::EventData &)> EventListener;
+    typedef std::function<void(const std::shared_ptr<Events::EventData>)> EventListener;
 
     class Entity {
       public:
-        Entity();
+        Entity() = default;
+        Entity(const uuids::uuid &uid);
         virtual ~Entity() = default;
 
         virtual void render() = 0;
@@ -29,13 +30,14 @@ namespace Bess::Scene {
 
       protected:
         uuids::uuid m_uid;
-        int m_renderId = -1;
         Transform::Transform2D m_transform;
-        bool m_visible = true;
-        bool m_selected = false;
-        bool m_hovered = false;
+        bool m_isVisible = true;
+        bool m_isSelected = false;
+        bool m_isHovered = false;
 
         std::queue<Events::EntityEvent> m_events;
         std::unordered_map<Events::EventType, std::vector<EventListener>> m_eventListeners;
+
+        int m_renderId = -1;
     };
 } // namespace Bess::Scene

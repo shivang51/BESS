@@ -2,6 +2,7 @@
 
 #include "event_type.h"
 #include <any>
+#include <memory>
 
 namespace Bess::Scene::Events {
     class Event {
@@ -15,11 +16,17 @@ namespace Bess::Scene::Events {
             return std::any_cast<T>(m_data);
         }
 
+        template <typename T>
+        std::shared_ptr<T> getDataPtr() const {
+            auto data = std::any_cast<T>(m_data);
+            return std::make_shared<T>(data);
+        }
+
         EventType getType() const;
 
         template <typename T>
-        static Event fromEventData(const T& data) {
-            const EventData d =  data;
+        static Event fromEventData(const T &data) {
+            const EventData d = data;
             Event evt(d.type, std::any(data));
             return evt;
         }

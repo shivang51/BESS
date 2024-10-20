@@ -3,6 +3,7 @@
 #include "common/types.h"
 #include "components_manager/component_bank.h"
 #include "project_file.h"
+#include "scene/scene_context.h"
 #include "uuid.h"
 
 namespace Bess::Pages {
@@ -73,11 +74,15 @@ namespace Bess::Pages {
 
         const uuids::uuid &getBulkIdAt(int index);
 
+        std::shared_ptr<Scene::SceneContext> getSceneContext();
+
       private:
         void addFocusLostEvent(const uuids::uuid &id);
         void addFocusEvent(const uuids::uuid &id);
 
       private:
+        std::shared_ptr<Scene::SceneContext> m_sceneContext;
+
         // ids of entity hovered by mouse
         int m_hoveredId = -1;
         int m_prevHoveredId = -1;

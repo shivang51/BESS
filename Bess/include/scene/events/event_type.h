@@ -2,6 +2,7 @@
 
 #include "ext/vector_float2.hpp"
 #include "glm.hpp"
+#include <memory>
 
 namespace Bess::Scene::Events {
     enum class MouseButton {
@@ -27,43 +28,48 @@ namespace Bess::Scene::Events {
         explicit EventData(const EventType type) {
             this->type = type;
         }
+
+        template <typename T>
+        static std::shared_ptr<T> asPtr(std::shared_ptr<EventData> data) {
+            return std::static_pointer_cast<T>(data);
+        }
     };
 
     struct MouseMoveEventData : EventData {
         glm::vec2 position;
-        MouseMoveEventData() : EventData(EventType::mouseMove), position(){};
+        MouseMoveEventData() : EventData(EventType::mouseMove), position() {};
     };
 
     struct MouseEnterEventData : EventData {
-        MouseEnterEventData() : EventData(EventType::mouseEnter), position(){};
+        MouseEnterEventData() : EventData(EventType::mouseEnter), position() {};
 
         glm::vec2 position;
     };
 
     struct MouseLeaveEventData : EventData {
-        MouseLeaveEventData() : EventData(EventType::mouseLeave), position(){};
+        MouseLeaveEventData() : EventData(EventType::mouseLeave), position() {};
         glm::vec2 position;
     };
 
     struct MouseButtonEventData : EventData {
-        MouseButtonEventData() : EventData(EventType::mouseButton), button(), position(), pressed(false){};
+        MouseButtonEventData() : EventData(EventType::mouseButton), button(), position(), pressed(false) {};
         MouseButton button;
         glm::vec2 position;
         bool pressed;
     };
 
     struct MouseWheelEventData : EventData {
-        MouseWheelEventData() : EventData(EventType::mouseWheel), offset(){};
+        MouseWheelEventData() : EventData(EventType::mouseWheel), offset() {};
         glm::vec2 offset;
     };
 
     struct KeyPressEventData : EventData {
-        KeyPressEventData() : EventData(EventType::keyPress), key(0){};
+        KeyPressEventData() : EventData(EventType::keyPress), key(0) {};
         int key;
     };
 
     struct KeyReleaseEventData : EventData {
-        KeyReleaseEventData(): EventData(EventType::keyRelease), key(0){};
+        KeyReleaseEventData() : EventData(EventType::keyRelease), key(0) {};
         int key;
     };
 

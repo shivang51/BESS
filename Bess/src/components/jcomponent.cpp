@@ -220,6 +220,9 @@ namespace Bess::Simulator::Components {
         ComponentsManager::addCompIdToRId(renderId, uid);
 
         ComponentsManager::renderComponents.emplace_back(uid);
+
+        std::shared_ptr<Scene::Entity> entity = ComponentsManager::components[uid];
+        Pages::MainPageState::getInstance()->getSceneContext()->addEntity(entity);
     }
 
     void JComponent::deleteComponent() {

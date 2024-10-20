@@ -15,6 +15,8 @@ namespace Bess::Pages {
 
     MainPageState::MainPageState() {
         createNewProject(false);
+        m_sceneContext = std::make_shared<Scene::SceneContext>();
+        m_sceneContext->init();
     }
 
     int MainPageState::getHoveredId() {
@@ -45,13 +47,13 @@ namespace Bess::Pages {
     void MainPageState::addFocusLostEvent(const uuids::uuid &uid) {
         Simulator::Components::ComponentEventData e{};
         e.type = Simulator::Components::ComponentEventType::focusLost;
-        Simulator::ComponentsManager::components[uid]->onEvent(e);
+        // Simulator::ComponentsManager::components[uid]->onEvent(e);
     }
 
     void MainPageState::addFocusEvent(const uuids::uuid &uid) {
         Simulator::Components::ComponentEventData e{};
         e.type = Simulator::Components::ComponentEventType::focus;
-        Simulator::ComponentsManager::components[uid]->onEvent(e);
+        // Simulator::ComponentsManager::components[uid]->onEvent(e);
     }
 
     void MainPageState::resetProjectState() {
@@ -225,5 +227,9 @@ namespace Bess::Pages {
 
     const uuids::uuid &MainPageState::getBulkIdAt(int index) {
         return m_bulkIds.at(index);
+    }
+
+    std::shared_ptr<Scene::SceneContext> MainPageState::getSceneContext() {
+        return m_sceneContext;
     }
 } // namespace Bess::Pages

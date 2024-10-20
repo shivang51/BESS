@@ -2,6 +2,7 @@
 #include "components_manager/component_type.h"
 #include "ext/vector_float2.hpp"
 #include "ext/vector_float3.hpp"
+#include "scene/entity/entity.h"
 #include "scene/transform/transform_2d.h"
 
 #include "uuid.h"
@@ -37,23 +38,20 @@ namespace Bess::Simulator::Components {
     typedef std::function<void(const glm::vec2 &pos)> Vec2CB;
     typedef std::function<void()> VoidCB;
 
-    class Component {
+    class Component : public Scene::Entity {
       public:
         Component() = default;
+        Component(const uuids::uuid &uid, glm::vec3 position, ComponentType type);
         Component(const uuids::uuid &uid, int renderId, glm::vec3 position, ComponentType type);
         virtual ~Component() = default;
 
         uuids::uuid getId() const;
         std::string getIdStr() const;
 
-        int getRenderId() const;
         const glm::vec3 &getPosition();
         void setPosition(const glm::vec3 &pos);
 
-        ComponentType
-        getType() const;
-
-        void onEvent(ComponentEventData e);
+        ComponentType getType() const;
 
         virtual void render() = 0;
 
@@ -71,16 +69,8 @@ namespace Bess::Simulator::Components {
         virtual void simulate();
 
       protected:
-        int m_renderId{};
-        uuids::uuid m_uid;
         ComponentType m_type = ComponentType::none;
         std::string m_name = "Unknown";
         std::unordered_map<ComponentEventType, std::any> m_events = {};
-        bool m_isSelected = false;
-        bool m_isHovered = false;
-        Scene::Transform::Transform2D m_transform{};
-
-      private:
-        std::queue<ComponentEventData> m_eventsQueue = {};
     };
 } // namespace Bess::Simulator::Components

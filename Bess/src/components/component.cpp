@@ -3,14 +3,27 @@
 
 namespace Bess::Simulator::Components {
 
-    Component::Component(const uuids::uuid &uid, int renderId, glm::vec3 position,
+    Component::Component(const uuids::uuid &uid, glm::vec3 position,
                          ComponentType type)
-        : m_uid(uid), m_renderId(renderId), m_type(type) {
+        : Bess::Scene::Entity(uid), m_type(type) {
 
         m_transform.setPosition(position);
     }
 
-    int Component::getRenderId() const { return m_renderId; }
+    Component::Component(const uuids::uuid &uid, int renderId, glm::vec3 position,
+                         ComponentType type)
+        : Bess::Scene::Entity(uid), m_type(type) {
+
+        m_transform.setPosition(position);
+
+        addEventListener<Scene::Events::EventType::mouseButton>([this](const std::shared_ptr<Scene::Events::EventData> data) {
+            auto evt = Scene::Events::EventData::asPtr<Scene::Events::MouseButtonEventData>(data);
+            if (evt->button == Scene::Events::MouseButton::left) {
+                auto cb = std::any_cast<OnLeftClickCB>(m_events[ComponentEventType::leftClick]);
+                cb(evt->position);
+            }
+        });
+    }
 
     uuids::uuid Component::getId() const { return m_uid; }
 
@@ -28,19 +41,12 @@ namespace Bess::Simulator::Components {
 
     void Component::simulate() {}
 
-    void Component::onEvent(ComponentEventData e) {
-        if (m_events.find(e.type) == m_events.end())
-            return;
-
-        m_eventsQueue.push(e);
-    }
-
     std::string Component::getName() const {
         return m_name;
     }
 
     std::string Component::getRenderName() const {
-        std::string name = m_name + " " + std::to_string(m_renderId);
+        std::string name = m_name + " " + std::to_string(getRenderId());
         return name;
     }
 
@@ -49,33 +55,9 @@ namespace Bess::Simulator::Components {
     void Component::update() {
         auto mainPageState = Pages::MainPageState::getInstance();
         m_isSelected = mainPageState->isBulkIdPresent(m_uid);
-        m_isHovered = mainPageState->getHoveredId() == m_renderId;
+        m_isHovered = mainPageState->getHoveredId() == getRenderId();
 
-        while (!m_eventsQueue.empty()) {
-            auto e = m_eventsQueue.front();
-            m_eventsQueue.pop();
-
-            switch (e.type) {
-            case ComponentEventType::leftClick: {
-                auto cb = std::any_cast<OnLeftClickCB>(m_events[e.type]);
-                cb(e.pos);
-            } break;
-            case ComponentEventType::rightClick: {
-                auto cb = std::any_cast<OnRightClickCB>(m_events[e.type]);
-                cb(e.pos);
-            } break;
-            case ComponentEventType::mouseEnter:
-            case ComponentEventType::mouseLeave:
-            case ComponentEventType::mouseHover:
-            case ComponentEventType::focus:
-            case ComponentEventType::focusLost: {
-                auto cb = std::any_cast<VoidCB>(m_events[e.type]);
-                cb();
-            } break;
-            default:
-                break;
-            }
-        }
+        Entity::update();
     }
 
 } // namespace Bess::Simulator::Components

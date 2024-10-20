@@ -1,6 +1,6 @@
 #include "ui/ui.h"
-#include "application_state.h"
 #include "settings/settings.h"
+#include "ui/ui_main/ui_main.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -8,7 +8,7 @@
 #include "imgui_internal.h"
 #include "ui/icons/FontAwesomeIcons.h"
 #include "ui/icons/MaterialIcons.h"
-#include "ui/ui_main/ui_main.h"
+#include "application_state.h"
 
 namespace Bess::UI {
     void init(GLFWwindow *window) {

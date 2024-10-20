@@ -3,10 +3,10 @@
 #include "scene/events/event_type.h"
 
 namespace Bess::Scene {
-    Entity::Entity() {
-        m_renderId = -1;
+    Entity::Entity(const uuids::uuid &uid) : m_uid(uid) {
+        m_renderId++;
         m_events = std::queue<Events::EntityEvent>();
-        m_eventListeners = std::unordered_map<Events::EventType, std::vector<std::function<void(const Events::EventData &)>>>();
+        m_eventListeners = std::unordered_map<Events::EventType, std::vector<EventListener>>();
         m_transform = Transform::Transform2D();
     }
 
@@ -23,8 +23,45 @@ namespace Bess::Scene {
                 continue;
             }
 
-            for (auto &cb : m_eventListeners[evt.getType()]) {
-                cb(evt.getData<Events::MouseButtonEventData>());
+            auto type = evt.getType();
+            switch (type) {
+            case Events::EventType::mouseButton: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::MouseButtonEventData>());
+                }
+            } break;
+            case Events::EventType::mouseMove: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::MouseMoveEventData>());
+                }
+            } break;
+            case Events::EventType::mouseWheel: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::MouseWheelEventData>());
+                }
+            } break;
+            case Events::EventType::keyPress: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::KeyPressEventData>());
+                }
+            } break;
+            case Events::EventType::keyRelease: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::KeyReleaseEventData>());
+                }
+            } break;
+            case Events::EventType::mouseEnter: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::MouseEnterEventData>());
+                }
+            } break;
+            case Events::EventType::mouseLeave: {
+                for (auto &cb : m_eventListeners[type]) {
+                    cb(evt.getDataPtr<Events::MouseLeaveEventData>());
+                }
+            } break;
+            default:
+                break;
             }
 
             m_events.pop();
