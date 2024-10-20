@@ -63,11 +63,13 @@ namespace Bess::Simulator::Components {
     void Connection::renderStraightConnection(glm::vec3 startPos, glm::vec3 endPos, float weight, glm::vec4 color) {
         auto z = -ComponentsManager::zIncrement;
         std::vector<glm::vec3> points = {{startPos.x, startPos.y, z}};
+        points.emplace_back(startPos + glm::vec3({30.f, 0.f, 0.f}));
         for (auto &pointId : m_points) {
             auto point = std::dynamic_pointer_cast<ConnectionPoint>(ComponentsManager::components[pointId]);
             points.emplace_back(point->getPosition());
             point->render();
         }
+        points.emplace_back(endPos - glm::vec3({30.f, 0.f, 0.f}));
         points.emplace_back(glm::vec3({endPos.x, endPos.y, z}));
 
         for (int i = 0; i < points.size() - 1; i++) {
@@ -110,12 +112,10 @@ namespace Bess::Simulator::Components {
 
     void Connection::update() {
         Component::update();
-        if (m_isSelected) {
-            for (auto &cpId : m_points) {
-                auto cp = std::dynamic_pointer_cast<ConnectionPoint>(ComponentsManager::components[cpId]);
-                cp->update();
-                cp->setSelected(true);
-            }
+        for (auto &cpId : m_points) {
+            auto cp = std::dynamic_pointer_cast<ConnectionPoint>(ComponentsManager::components[cpId]);
+            cp->update();
+            if(m_isSelected) cp->setSelected(true);
         }
     }
 
@@ -217,7 +217,8 @@ namespace Bess::Simulator::Components {
         auto uid = Common::Helpers::uuidGenerator.getUUID();
         auto renderId = ComponentsManager::getNextRenderId();
         auto parentId = m_uid;
-        auto position = glm::vec3(pos.x, pos.y, -ComponentsManager::zIncrement);
+        auto z = m_transform.getPosition().z;
+        auto position = glm::vec3(pos.x, pos.y, z+ComponentsManager::zIncrement);
         ComponentsManager::components[uid] = std::make_shared<ConnectionPoint>(uid, parentId, renderId, position);
         ComponentsManager::addRenderIdToCId(renderId, uid);
         ComponentsManager::addCompIdToRId(renderId, uid);

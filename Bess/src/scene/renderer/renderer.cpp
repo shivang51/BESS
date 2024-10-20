@@ -49,8 +49,8 @@ namespace Bess {
             m_GridVao = std::make_unique<Gl::Vao>(8, 12, attachments, sizeof(Gl::GridVertex));
         }
 
-        m_AvailablePrimitives = {PrimitiveType::curve, PrimitiveType::quad,
-                                 PrimitiveType::circle, PrimitiveType::font, PrimitiveType::triangle};
+        m_AvailablePrimitives = {PrimitiveType::curve, PrimitiveType::circle,
+                                 PrimitiveType::font, PrimitiveType::triangle, PrimitiveType::quad };
         m_MaxRenderLimit[PrimitiveType::quad] = 2000;
         m_MaxRenderLimit[PrimitiveType::curve] = 2000;
         m_MaxRenderLimit[PrimitiveType::circle] = 2000;
@@ -269,10 +269,11 @@ namespace Bess {
 
         m_GridShader->bind();
         m_GridVao->bind();
-
+       
+        auto camOffset = m_camera->getPos();
         m_GridShader->setUniformMat4("u_mvp", m_camera->getOrtho());
         m_GridShader->setUniform1f("u_zoom", m_camera->getZoom());
-        m_GridShader->setUniformVec2("u_cameraOffset", -m_camera->getPos());
+        m_GridShader->setUniformVec2("u_cameraOffset", {-camOffset.x, camOffset.y});
         m_GridVao->setVertices(vertices.data(), vertices.size());
 
         Gl::Api::drawElements(GL_TRIANGLES, 6);
