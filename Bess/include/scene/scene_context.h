@@ -27,6 +27,8 @@ namespace Bess::Scene {
         void addEntity(std::shared_ptr<Entity> entity);
         const std::vector<std::shared_ptr<Entity>> &getEntities() const;
 
+        const glm::vec2 &getSize() const;
+
       private:
         std::unique_ptr<Gl::FrameBuffer> m_msaaFramebuffer;
         std::unique_ptr<Gl::FrameBuffer> m_framebuffer;

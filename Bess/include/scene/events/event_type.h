@@ -24,68 +24,53 @@ namespace Bess::Scene::Events {
     struct EventData {
         EventType type;
 
-        template <typename T>
-        T as() {
-            return static_cast<T>(this);
+        explicit EventData(const EventType type) {
+            this->type = type;
         }
     };
 
     struct MouseMoveEventData : EventData {
         glm::vec2 position;
-        MouseMoveEventData() {
-            type = EventType::mouseMove;
-        };
+        MouseMoveEventData() : EventData(EventType::mouseMove), position(){};
     };
 
     struct MouseEnterEventData : EventData {
-        MouseEnterEventData() {
-            type = EventType::mouseEnter;
-        };
+        MouseEnterEventData() : EventData(EventType::mouseEnter), position(){};
 
         glm::vec2 position;
     };
 
     struct MouseLeaveEventData : EventData {
-        MouseLeaveEventData() {
-            type = EventType::mouseLeave;
-        };
+        MouseLeaveEventData() : EventData(EventType::mouseLeave), position(){};
         glm::vec2 position;
     };
 
     struct MouseButtonEventData : EventData {
-        MouseButtonEventData() {
-            type = EventType::mouseButton;
-        };
+        MouseButtonEventData() : EventData(EventType::mouseButton), button(), position(), pressed(false){};
         MouseButton button;
         glm::vec2 position;
         bool pressed;
     };
 
     struct MouseWheelEventData : EventData {
-        MouseWheelEventData() {
-            type = EventType::mouseWheel;
-        };
+        MouseWheelEventData() : EventData(EventType::mouseWheel), offset(){};
         glm::vec2 offset;
     };
 
     struct KeyPressEventData : EventData {
-        KeyPressEventData() {
-            type = EventType::keyPress;
-        };
+        KeyPressEventData() : EventData(EventType::keyPress), key(0){};
         int key;
     };
 
     struct KeyReleaseEventData : EventData {
-        KeyReleaseEventData() {
-            type = EventType::keyRelease;
-        };
+        KeyReleaseEventData(): EventData(EventType::keyRelease), key(0){};
         int key;
     };
 
     struct ResizeEventData : EventData {
-        ResizeEventData() {
-            type = EventType::resize;
+        ResizeEventData() : EventData(EventType::resize) {
+            size = {};
         };
-        glm::vec2 size;
+        glm::vec2 size{};
     };
 } // namespace Bess::Scene::Events

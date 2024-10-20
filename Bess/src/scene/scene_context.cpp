@@ -19,7 +19,7 @@ namespace Bess::Scene {
         m_framebuffer = std::make_unique<Gl::FrameBuffer>(800, 600, attachments);
 
         m_events = {};
-
+        m_entities = {};
         m_renderIdToEntity = {};
     }
 
@@ -49,11 +49,11 @@ namespace Bess::Scene {
     }
 
     void SceneContext::render() {
-        beginScene();
+        // beginScene();
         for (auto &entity : m_entities) {
             entity->render();
         }
-        endScene();
+        // endScene();
     }
 
     void SceneContext::update() {
@@ -105,10 +105,15 @@ namespace Bess::Scene {
 
     void SceneContext::addEntity(std::shared_ptr<Entity> entity) {
         m_entities.push_back(entity);
+        m_renderIdToEntity[entity->getRenderId()] = entity;
     }
 
     const std::vector<std::shared_ptr<Entity>> &SceneContext::getEntities() const {
         return m_entities;
+    }
+
+    const glm::vec2 &SceneContext::getSize() const {
+        return m_size;
     }
 
     void SceneContext::onEvent(const Events::Event &evt) {

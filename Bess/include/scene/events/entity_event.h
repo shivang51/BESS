@@ -7,6 +7,7 @@ namespace Bess::Scene::Events {
 
     class EntityEvent : public Event {
       public:
+        EntityEvent() = default;
         EntityEvent(const EventType type, const EventData &data);
         static EntityEvent fromEventData(const EventData &data);
     };

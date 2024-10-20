@@ -10,6 +10,7 @@
 #include "ext/vector_float3.hpp"
 #include "ext/vector_float4.hpp"
 #include "pages/page_identifier.h"
+#include "scene/events/event_type.h"
 #include "scene/renderer/renderer.h"
 #include "settings/viewport_theme.h"
 #include "simulator/simulator_engine.h"
@@ -19,7 +20,21 @@
 using namespace Bess::Renderer2D;
 
 namespace Bess::Pages {
-    std::shared_ptr<Page> MainPage::getInstance(const std::shared_ptr<Window> &parentWindow) {
+    class DummyEntity : public Scene::Entity {
+      public:
+        DummyEntity() : Scene::Entity() {
+            m_renderId = 0;
+        }
+
+        ~DummyEntity() override = default;
+
+        void render() override {
+            Renderer2D::Renderer::quad({0.f, 0.f, 0.f}, {10.f, 10.f}, {1.f, 0.f, 0.f, 1.f}, -1.f);
+        }
+    };
+
+    std::shared_ptr<Page>
+    MainPage::getInstance(const std::shared_ptr<Window> &parentWindow) {
         static auto instance = std::make_shared<MainPage>(parentWindow);
         return instance;
     }
@@ -36,99 +51,31 @@ namespace Bess::Pages {
         m_camera = std::make_shared<Camera>(800, 600);
         m_parentWindow = parentWindow;
 
-        std::vector<Gl::FBAttachmentType> attachments = {Gl::FBAttachmentType::RGBA_RGBA, Gl::FBAttachmentType::R32I_REDI, Gl::DEPTH32F_STENCIL8};
-        m_multiSampledFramebuffer = std::make_unique<Gl::FrameBuffer>(800, 600, attachments, true);
-
-        attachments = {Gl::FBAttachmentType::RGB_RGB, Gl::FBAttachmentType::R32I_REDI};
-        m_normalFramebuffer = std::make_unique<Gl::FrameBuffer>(800, 600, attachments);
-
         UI::UIMain::state.cameraZoom = Camera::defaultZoom;
-        UI::UIMain::state.viewportTexture = m_normalFramebuffer->getColorBufferTexId(0);
+        m_sceneContext = std::make_shared<Scene::SceneContext>();
+        m_sceneContext->init();
+        auto ent = std::make_shared<DummyEntity>();
+        m_sceneContext->addEntity(ent);
+
+        UI::UIMain::state.viewportTexture = m_sceneContext->getTextureId();
         m_state = MainPageState::getInstance();
     }
 
     void MainPage::draw() {
-        drawScene();
-
-        for (int i = 0; i < 2; i++) {
-            m_multiSampledFramebuffer->bindColorAttachmentForRead(i);
-            m_normalFramebuffer->bindColorAttachmentForDraw(i);
-            Gl::FrameBuffer::blitColorBuffer(UI::UIMain::state.viewportSize.x, UI::UIMain::state.viewportSize.y);
-        }
-        Gl::FrameBuffer::unbindAll();
+        m_sceneContext->beginScene();
+        Renderer2D::Renderer::begin(m_camera);
+        m_sceneContext->render();
+        Renderer2D::Renderer::end();
+        m_sceneContext->endScene();
         UI::UIMain::draw();
     }
 
-    void MainPage::drawScene() {
-        static int value = -1;
-        m_multiSampledFramebuffer->bind();
-
-        const auto bgColor = ViewportTheme::backgroundColor;
-        const float clearColor[] = {bgColor.x, bgColor.y, bgColor.z, bgColor.a};
-        m_multiSampledFramebuffer->clearColorAttachment<GL_FLOAT>(0, clearColor);
-        m_multiSampledFramebuffer->clearColorAttachment<GL_INT>(1, &value);
-
-        Gl::FrameBuffer::clearDepthStencilBuf();
-
-        Renderer::begin(m_camera);
-
-        Renderer::grid({0.f, 0.f, -2.f}, m_camera->getSpan(), -1, ViewportTheme::gridColor);
-
-        switch (m_state->getDrawMode()) {
-        case UI::Types::DrawMode::connection: {
-            std::vector<glm::vec3> points = m_state->getPoints();
-            auto startPos = Simulator::ComponentsManager::components[m_state->getConnStartId()]->getPosition();
-            points.insert(points.begin(), startPos);
-            const auto mPos = glm::vec3(getNVPMousePos(), -1);
-            points.emplace_back(mPos);
-            float weight = 2.f;
-
-            for (int i = 0; i < points.size() - 1; i++) {
-                auto sPos = points[i];
-                auto ePos = points[i + 1];
-                float offset = weight / 2.f;
-                if (sPos.y > ePos.y)
-                    offset = -offset;
-                float midX = ePos.x;
-                Renderer::line(sPos, {midX, sPos.y, -1}, weight, ViewportTheme::wireColor, -1);
-                Renderer::line({midX, sPos.y - offset, -1}, {midX, ePos.y + offset, -1}, weight, ViewportTheme::wireColor, -1);
-                Renderer::line({midX, ePos.y, -1}, ePos, weight, ViewportTheme::wireColor, -1);
-            }
-        } break;
-        case UI::Types::DrawMode::selectionBox: {
-            auto &dragData = m_state->getDragData();
-            auto mp = getNVPMousePos();
-            auto start = dragData.dragOffset;
-            auto end = mp;
-            auto size = mp - dragData.dragOffset;
-            auto pos = dragData.dragOffset;
-            pos += size / 2.f;
-            size = glm::abs(size);
-            float z = 9.f;
-            Renderer::line({start.x, start.y, z}, {end.x, start.y, -1}, 1.f, ViewportTheme::selectionBoxBorderColor, -1);
-            Renderer::line({end.x, start.y, z}, {end.x, end.y, -1}, 1.f, ViewportTheme::selectionBoxBorderColor, -1);
-            Renderer::line({end.x, end.y, z}, {start.x, end.y, -1}, 1.f, ViewportTheme::selectionBoxBorderColor, -1);
-            Renderer::line({start.x, end.y, z}, {start.x, start.y, -1}, 1.f, ViewportTheme::selectionBoxBorderColor, -1);
-            Renderer::quad({pos.x, pos.y, z}, size, ViewportTheme::selectionBoxFillColor, -1);
-        } break;
-        default:
-            break;
-        }
-
-        for (auto &id : Simulator::ComponentsManager::renderComponents) {
-            const auto &entity = Simulator::ComponentsManager::components[id];
-            entity->render();
-        }
-
-        Renderer::end();
-
-        Gl::FrameBuffer::unbindAll();
-    }
-
     void MainPage::update(const std::vector<ApplicationEvent> &events) {
-        if (m_multiSampledFramebuffer->getSize() != UI::UIMain::state.viewportSize) {
-            m_multiSampledFramebuffer->resize(UI::UIMain::state.viewportSize.x, UI::UIMain::state.viewportSize.y);
-            m_normalFramebuffer->resize(UI::UIMain::state.viewportSize.x, UI::UIMain::state.viewportSize.y);
+        if (m_sceneContext->getSize() != UI::UIMain::state.viewportSize) {
+            Scene::Events::ResizeEventData data;
+            data.size = UI::UIMain::state.viewportSize;
+            auto evt = Scene::Events::Event::fromEventData<Scene::Events::ResizeEventData>(data);
+            m_sceneContext->onEvent(evt);
             m_camera->resize(UI::UIMain::state.viewportSize.x, UI::UIMain::state.viewportSize.y);
         }
 
@@ -142,115 +89,136 @@ namespace Bess::Pages {
 
         auto &dragData = m_state->getDragData();
 
-        if (!dragData.isDragging) {
-            auto viewportMousePos = getViewportMousePos();
-            viewportMousePos.y = UI::UIMain::state.viewportSize.y - viewportMousePos.y;
-            int hoverId = m_normalFramebuffer->readIntFromColAttachment(1, static_cast<int>(viewportMousePos.x), static_cast<int>(viewportMousePos.y));
-            if (Simulator::ComponentsManager::renderComponents.size() == 0 && hoverId != -1) {
-                std::cout << "No render components found but hover id was " << hoverId << std::endl;
-                hoverId = -1;
-            }
-            m_state->setHoveredId(hoverId);
-        }
-
-        if (m_state->shouldReadBulkIds()) {
-            m_state->setReadBulkIds(false);
-            m_state->clearBulkIds();
-            auto end = getViewportMousePos();
-            auto start = dragData.vpMousePos;
-            auto size = end - start;
-            glm::vec2 pos = {std::min(start.x, end.x), std::max(start.y, end.y)};
-            size = glm::abs(size);
-
-            int w = (int)size.x;
-            int h = (int)size.y;
-            int x = pos.x, y = UI::UIMain::state.viewportSize.y - pos.y;
-
-            auto ids = m_normalFramebuffer->readIntsFromColAttachment(1, x, y, w, h);
-
-            if (ids.size() == 0)
-                return;
-
-            std::set<int> uniqueIds(ids.begin(), ids.end());
-
-            for (auto &id : uniqueIds) {
-                if (!Simulator::ComponentsManager::isRenderComponent(id))
-                    continue;
-                m_state->addBulkId(Simulator::ComponentsManager::renderIdToCid(id));
-            }
-            m_state->clearDragData();
-        }
-
+        // if (!dragData.isDragging) {
+        //     auto viewportMousePos = getViewportMousePos();
+        //     viewportMousePos.y = UI::UIMain::state.viewportSize.y - viewportMousePos.y;
+        //     int hoverId = m_normalFramebuffer->readIntFromColAttachment(1, static_cast<int>(viewportMousePos.x), static_cast<int>(viewportMousePos.y));
+        //     if (Simulator::ComponentsManager::renderComponents.size() == 0 && hoverId != -1) {
+        //         std::cout << "No render components found but hover id was " << hoverId << std::endl;
+        //         hoverId = -1;
+        //     }
+        //     m_state->setHoveredId(hoverId);
+        // }
+        //
+        // if (m_state->shouldReadBulkIds()) {
+        //     m_state->setReadBulkIds(false);
+        //     m_state->clearBulkIds();
+        //     auto end = getViewportMousePos();
+        //     auto start = dragData.vpMousePos;
+        //     auto size = end - start;
+        //     glm::vec2 pos = {std::min(start.x, end.x), std::max(start.y, end.y)};
+        //     size = glm::abs(size);
+        //
+        //     int w = (int)size.x;
+        //     int h = (int)size.y;
+        //     int x = pos.x, y = UI::UIMain::state.viewportSize.y - pos.y;
+        //
+        //     auto ids = m_normalFramebuffer->readIntsFromColAttachment(1, x, y, w, h);
+        //
+        //     if (ids.size() == 0)
+        //         return;
+        //
+        //     std::set<int> uniqueIds(ids.begin(), ids.end());
+        //
+        //     for (auto &id : uniqueIds) {
+        //         if (!Simulator::ComponentsManager::isRenderComponent(id))
+        //             continue;
+        //         m_state->addBulkId(Simulator::ComponentsManager::renderIdToCid(id));
+        //     }
+        //     m_state->clearDragData();
+        // }
+        //
         for (auto &event : events) {
             switch (event.getType()) {
             case ApplicationEventType::MouseWheel: {
                 const auto data = event.getData<ApplicationEvent::MouseWheelData>();
                 onMouseWheel(data.x, data.y);
+                Scene::Events::MouseWheelEventData e;
+                e.offset = {data.x, data.y};
+                addSceneEvent(e);
             } break;
             case ApplicationEventType::MouseButton: {
                 const auto data = event.getData<ApplicationEvent::MouseButtonData>();
+                Scene::Events::MouseButtonEventData e;
+                e.position = getViewportMousePos();
+                e.pressed = data.pressed;
                 if (data.button == MouseButton::left) {
                     onLeftMouse(data.pressed);
+                    e.button = Scene::Events::MouseButton::left;
                 } else if (data.button == MouseButton::right) {
                     onRightMouse(data.pressed);
+                    e.button = Scene::Events::MouseButton::right;
                 } else if (data.button == MouseButton::middle) {
                     onMiddleMouse(data.pressed);
+                    e.button = Scene::Events::MouseButton::middle;
                 }
+                addSceneEvent(e);
             } break;
             case ApplicationEventType::MouseMove: {
                 const auto data = event.getData<ApplicationEvent::MouseMoveData>();
                 onMouseMove(data.x, data.y);
+                Scene::Events::MouseMoveEventData e;
+                e.position = {data.x, data.y};
+                addSceneEvent(e);
             } break;
             case ApplicationEventType::KeyPress: {
                 const auto data = event.getData<ApplicationEvent::KeyPressData>();
                 m_state->setKeyPressed(data.key, true);
+                Scene::Events::KeyPressEventData e;
+                e.key = data.key;
+                addSceneEvent(e);
             } break;
             case ApplicationEventType::KeyRelease: {
                 const auto data = event.getData<ApplicationEvent::KeyReleaseData>();
                 m_state->setKeyPressed(data.key, false);
+                Scene::Events::KeyReleaseEventData e;
+                e.key = data.key;
+                addSceneEvent(e);
             } break;
             default:
                 break;
             }
         }
 
+        m_sceneContext->update();
+
         // key board bindings
-        {
-            if (m_state->isKeyPressed(GLFW_KEY_DELETE)) {
-                for (auto &compId : m_state->getBulkIds()) {
-                    if (compId == Simulator::ComponentsManager::emptyId)
-                        continue;
-                    Simulator::ComponentsManager::deleteComponent(compId);
-                }
-            }
+        // {
+        //     if (m_state->isKeyPressed(GLFW_KEY_DELETE)) {
+        //         for (auto &compId : m_state->getBulkIds()) {
+        //             if (compId == Simulator::ComponentsManager::emptyId)
+        //                 continue;
+        //             Simulator::ComponentsManager::deleteComponent(compId);
+        //         }
+        //     }
+        //
+        //     if (m_state->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+        //         if (m_state->isKeyPressed(GLFW_KEY_A)) {
+        //             m_state->clearBulkIds();
+        //             for (auto &compId : Simulator::ComponentsManager::renderComponents)
+        //                 m_state->addBulkId(compId);
+        //         }
+        //     }
+        // }
+        //
+        // if (isCursorInViewport() && m_state->getHoveredId() != -1) {
+        //     auto &cid = Simulator::ComponentsManager::renderIdToCid(m_state->getHoveredId());
+        //     Simulator::Components::ComponentEventData e;
+        //     e.type = Simulator::Components::ComponentEventType::mouseHover;
+        //     Simulator::ComponentsManager::components[cid]->onEvent(e);
+        // }
 
-            if (m_state->isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
-                if (m_state->isKeyPressed(GLFW_KEY_A)) {
-                    m_state->clearBulkIds();
-                    for (auto &compId : Simulator::ComponentsManager::renderComponents)
-                        m_state->addBulkId(compId);
-                }
-            }
-        }
-
-        if (isCursorInViewport() && m_state->getHoveredId() != -1) {
-            auto &cid = Simulator::ComponentsManager::renderIdToCid(m_state->getHoveredId());
-            Simulator::Components::ComponentEventData e;
-            e.type = Simulator::Components::ComponentEventType::mouseHover;
-            Simulator::ComponentsManager::components[cid]->onEvent(e);
-        }
-
-        for (auto &comp : Simulator::ComponentsManager::components) {
-            if (comp.second->getType() == Simulator::ComponentType::clock) {
-                const auto clockCmp = std::dynamic_pointer_cast<Simulator::Components::Clock>(comp.second);
-                clockCmp->update();
-            } else if (comp.second->getType() == Simulator::ComponentType::connection) {
-                const auto connCmp = std::dynamic_pointer_cast<Simulator::Components::Connection>(comp.second);
-                connCmp->update();
-            } else if (comp.second->getType() != Simulator::ComponentType::connectionPoint) {
-                comp.second->update();
-            }
-        }
+        // for (auto &comp : Simulator::ComponentsManager::components) {
+        //     if (comp.second->getType() == Simulator::ComponentType::clock) {
+        //         const auto clockCmp = std::dynamic_pointer_cast<Simulator::Components::Clock>(comp.second);
+        //         clockCmp->update();
+        //     } else if (comp.second->getType() == Simulator::ComponentType::connection) {
+        //         const auto connCmp = std::dynamic_pointer_cast<Simulator::Components::Connection>(comp.second);
+        //         connCmp->update();
+        //     } else if (comp.second->getType() != Simulator::ComponentType::connectionPoint) {
+        //         comp.second->update();
+        //     }
+        // }
 
         if (!m_state->isSimulationPaused()) {
             Simulator::Engine::Simulate();

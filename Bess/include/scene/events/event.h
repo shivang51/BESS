@@ -7,10 +7,8 @@ namespace Bess::Scene::Events {
     class Event {
       public:
         Event() = default;
-        Event(const EventType type, const std::any &data);
+        Event(EventType type, const std::any &data);
         ~Event();
-
-        Event(const Event &&other);
 
         template <typename T>
         T getData() const {
@@ -18,6 +16,13 @@ namespace Bess::Scene::Events {
         }
 
         EventType getType() const;
+
+        template <typename T>
+        static Event fromEventData(const T& data) {
+            const EventData d =  data;
+            Event evt(d.type, std::any(data));
+            return evt;
+        }
 
       protected:
         EventType m_type;

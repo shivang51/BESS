@@ -4,7 +4,7 @@
 namespace Bess::Scene::Entities {
 
     std::shared_ptr<EmptyEntity> EmptyEntity::getInstance() {
-        static std::shared_ptr<EmptyEntity> instance{};
+        static auto instance = std::make_shared<EmptyEntity>();
         return instance;
     }
 

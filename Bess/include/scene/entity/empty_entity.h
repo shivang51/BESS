@@ -8,6 +8,7 @@ namespace Bess::Scene::Entities {
         static std::shared_ptr<EmptyEntity> getInstance();
 
         EmptyEntity() = default;
+        ~EmptyEntity() = default;
 
         void render() override;
     };

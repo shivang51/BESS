@@ -3,6 +3,13 @@
 #include "scene/events/event_type.h"
 
 namespace Bess::Scene {
+    Entity::Entity() {
+        m_renderId = -1;
+        m_events = std::queue<Events::EntityEvent>();
+        m_eventListeners = std::unordered_map<Events::EventType, std::vector<std::function<void(const Events::EventData &)>>>();
+        m_transform = Transform::Transform2D();
+    }
+
     void Entity::onEvent(const Events::EntityEvent &evt) {
         m_events.push(evt);
     }

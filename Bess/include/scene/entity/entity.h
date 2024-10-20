@@ -11,8 +11,8 @@ namespace Bess::Scene {
 
     class Entity {
       public:
-        Entity() = default;
-        virtual ~Entity();
+        Entity();
+        virtual ~Entity() = default;
 
         virtual void render() = 0;
 
@@ -27,7 +27,7 @@ namespace Bess::Scene {
             m_eventListeners[T].emplace_back(listener);
         }
 
-      private:
+      protected:
         uuids::uuid m_uid;
         int m_renderId = -1;
         Transform::Transform2D m_transform;

@@ -6,7 +6,6 @@ namespace Bess::Scene::Events {
 
     Event::~Event() {}
 
-    Event::Event(const Event &&other) : m_type(other.m_type), m_data(other.m_data) {}
-
     EventType Event::getType() const { return m_type; }
+
 } // namespace Bess::Scene::Events

@@ -5,6 +5,8 @@
 #include "pages/main_page/main_page_state.h"
 #include "pages/page.h"
 #include "scene/renderer/gl/framebuffer.h"
+#include "scene/scene_context.h"
+#include "ui/ui_main/ui_main.h"
 #include "window.h"
 
 #include <memory>
@@ -31,8 +33,8 @@ namespace Bess::Pages {
 
       private:
         std::shared_ptr<Camera> m_camera;
-        std::unique_ptr<Gl::FrameBuffer> m_multiSampledFramebuffer, m_normalFramebuffer;
         std::shared_ptr<Window> m_parentWindow;
+        std::shared_ptr<Scene::SceneContext> m_sceneContext;
 
         // event handlers
       private:
@@ -45,6 +47,13 @@ namespace Bess::Pages {
         bool isCursorInViewport();
         glm::vec2 getViewportMousePos();
         glm::vec2 getNVPMousePos();
+
+        template <typename T>
+        void addSceneEvent(const T &data) {
+            if (!UI::UIMain::state.isViewportFocused)
+                return;
+            m_sceneContext->onEvent(Scene::Events::Event::fromEventData<T>(data));
+        }
 
       private:
         bool m_leftMousePressed = false;
