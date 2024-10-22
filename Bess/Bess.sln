@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bess", "Bess\Bess.csproj", "{FA0D6AA9-CBB8-4190-9E3D-CDB409849797}"
+	ProjectSection(ProjectDependencies) = postProject
+		{29441892-6B8B-4D35-8B76-017F038C719A} = {29441892-6B8B-4D35-8B76-017F038C719A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BessScene", "BessScene\BessScene.csproj", "{29441892-6B8B-4D35-8B76-017F038C719A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA0D6AA9-CBB8-4190-9E3D-CDB409849797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA0D6AA9-CBB8-4190-9E3D-CDB409849797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA0D6AA9-CBB8-4190-9E3D-CDB409849797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA0D6AA9-CBB8-4190-9E3D-CDB409849797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29441892-6B8B-4D35-8B76-017F038C719A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29441892-6B8B-4D35-8B76-017F038C719A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29441892-6B8B-4D35-8B76-017F038C719A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29441892-6B8B-4D35-8B76-017F038C719A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

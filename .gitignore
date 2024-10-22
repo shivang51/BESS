@@ -4,6 +4,8 @@ cmake-build-release/
 x64/
 out/
 build/
+bin/
+obj/
 
 *.o
 *.a
