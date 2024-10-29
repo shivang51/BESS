@@ -11,14 +11,20 @@
         Title="Bess">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-
-    <StackPanel>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <controls:BessSceneControl Width="800" Height="450"/>
-    </StackPanel>
-
+    
+    <Grid ColumnDefinitions="*,1,*,1,*">
+        <StackPanel Grid.Column="0" Orientation="Vertical" Margin="4">
+            <Label>Components</Label>
+            <Button Command="{Binding OnClick}">Test Button</Button>
+        </StackPanel>
+        <GridSplitter Grid.Column="1" Background="DarkGray" ResizeDirection="Columns"></GridSplitter>
+        <controls:BessSceneControl Grid.Column="2"/>
+        <GridSplitter Grid.Column="3" Background="DarkGray" ResizeDirection="Columns"></GridSplitter>
+        <StackPanel Grid.Column="4" Orientation="Vertical" Margin="4">
+            <Label>Properties</Label>
+        </StackPanel>
+    </Grid>
+    
 </Window>

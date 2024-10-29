@@ -16,19 +16,21 @@ public class BessSceneControl: OpenGlControlBase
         Console.WriteLine(Info);
         Console.WriteLine(gl.GetString(ApiWrapper.GlVersion()));
         _sceneCtx.Init();
+        _sceneCtx.OnResize((int)800, 450);
     }
     
     protected override void OnOpenGlRender(GlInterface gl, int fb)
     {
-        // _sceneCtx.Render(fb);
-        gl.BindFramebuffer(GlConsts.GL_FRAMEBUFFER, fb);
-        gl.ClearColor((float)0.9, (float)0.2, (float)0.2, (float)1.0);
-        gl.Clear(GlConsts.GL_COLOR_BUFFER_BIT | GlConsts.GL_DEPTH_BUFFER_BIT);
+        _sceneCtx.Render(fb);
+        _sceneCtx.Update();
     }
 
     protected override void OnSizeChanged(SizeChangedEventArgs e)
     {
         base.OnSizeChanged(e);
-        // _sceneCtx.OnResize((int)e.NewSize.Width, (int)e.NewSize.Height);
+        if (_sceneCtx.IsInitialized)
+        {
+            _sceneCtx.OnResize((int)e.NewSize.Width, (int)e.NewSize.Height);
+        }
     }
 }

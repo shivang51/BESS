@@ -4,7 +4,9 @@ namespace BessScene;
 
 public class SceneContext
 {
-    private IntPtr _ctxPtr;
+    private IntPtr _ctxPtr = IntPtr.Zero;
+    
+    public bool IsInitialized => _ctxPtr != IntPtr.Zero;
     
     public void Init()
     {

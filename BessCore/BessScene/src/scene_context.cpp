@@ -2,7 +2,7 @@
 #include "entity/entity.h"
 #include "events/entity_event.h"
 #include "events/event_type.h"
-//#include "settings/viewport_theme.h"
+// #include "settings/viewport_theme.h"
 
 #include "entity/empty_entity.h"
 
@@ -31,8 +31,8 @@ namespace Bess::Scene {
         static int value = -1;
         m_msaaFramebuffer->bind();
 
-        //const auto bgColor = ViewportTheme::backgroundColor;
-        const glm::vec4 bgColor = glm::vec4(0.8f, 0.1f, 0.1f, 1.f);
+        // const auto bgColor = ViewportTheme::backgroundColor;
+        const glm::vec4 bgColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
         const float clearColor[] = {bgColor.x, bgColor.y, bgColor.z, bgColor.a};
         m_msaaFramebuffer->clearColorAttachment<GL_FLOAT>(0, clearColor);
         m_msaaFramebuffer->clearColorAttachment<GL_INT>(1, &value);
@@ -56,18 +56,18 @@ namespace Bess::Scene {
         }
         // endScene();
     }
-    
+
     void SceneContext::render(int fbo) {
+        std::cout << "Rendering to fbo " << fbo << std::endl;
         beginScene();
         for (auto &entity : m_entities) {
             entity->render();
         }
         endScene();
 
-		m_framebuffer->bindColorAttachmentForRead(0);
-
+        m_framebuffer->bindColorAttachmentForRead(0);
         GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo));
-		int width = m_size.x;
+        int width = m_size.x;
         int height = m_size.y;
         GL_CHECK(glBlitFramebuffer(0, 0, static_cast<GLint>(width), static_cast<GLint>(height), 0, 0, static_cast<GLint>(width),
                                    static_cast<GLint>(height), GL_COLOR_BUFFER_BIT, GL_NEAREST));
@@ -226,6 +226,7 @@ namespace Bess::Scene {
     }
 
     void SceneContext::handleResize(const Events::ResizeEventData &data) {
+        std::cout << "Resizing to " << data.size.x << "x" << data.size.y << std::endl;
         m_size = data.size;
         m_msaaFramebuffer->resize(m_size.x, m_size.y);
         m_framebuffer->resize(m_size.x, m_size.y);

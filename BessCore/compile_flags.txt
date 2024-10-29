@@ -1,7 +1,7 @@
 -xc++
 -std=c++20
 
--IBess/include
+-IBessScene/include
 -Iexternal/glad/include
 -Iexternal/glad/src
 -Iexternal/imgui/
