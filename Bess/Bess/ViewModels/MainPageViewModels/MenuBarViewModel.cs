@@ -4,7 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 
-namespace Bess.ViewModels.MainWindowViewModels;
+namespace Bess.ViewModels.MainPageViewModels;
 
 public class MenuBarViewModel: ViewModelBase
 {

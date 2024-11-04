@@ -26,8 +26,8 @@ public class BessSceneControl: Control
     private readonly CameraController _cameraController;
     private readonly Dictionary<Key, bool> _keys = new();
     private static DispatcherTimer? _timer;
-    private const int Fps = 120;
-    private const int FrameRateMs = (1000 / Fps);
+    private const int Fps = 240;
+    private const int FrameRateMs = (1 / Fps);
     
     public float Zoom
     {

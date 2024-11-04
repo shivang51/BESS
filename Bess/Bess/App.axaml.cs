@@ -27,7 +27,48 @@ public partial class App : Application
                 DataContext = new MainWindowViewModel(),
             };
         }
+        
+        var mainWindowViewModel = new MainWindowViewModel();
+
+        switch (ApplicationLifetime)
+        {
+            case IClassicDesktopStyleApplicationLifetime desktopLifetime:
+            {
+                var mainWindow = new MainWindow
+                {
+                    DataContext = mainWindowViewModel
+                };
+
+                mainWindow.Closing += (_, _) =>
+                {
+                    mainWindowViewModel.CloseLayout();
+                };
+
+                desktopLifetime.MainWindow = mainWindow;
+
+                desktopLifetime.Exit += (_, _) =>
+                {
+                    mainWindowViewModel.CloseLayout();
+                };
+
+                break;
+            }
+            case ISingleViewApplicationLifetime singleViewLifetime:
+            {
+                var mainView = new MainWindow()
+                {
+                    DataContext = mainWindowViewModel
+                };
+
+                singleViewLifetime.MainView = mainView;
+
+                break;
+            }
+        }
+
 
         base.OnFrameworkInitializationCompleted();
     }
+    
+    
 }

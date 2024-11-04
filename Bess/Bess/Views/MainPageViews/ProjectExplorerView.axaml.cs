@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Bess.Views.MainPageViews;
 
-public partial class ProjectExplorer : UserControl
+public partial class ProjectExplorerView : UserControl
 {
-    public ProjectExplorer()
+    public ProjectExplorerView()
     {
         InitializeComponent();
     }

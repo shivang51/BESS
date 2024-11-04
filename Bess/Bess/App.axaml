@@ -7,6 +7,7 @@
              RequestedThemeVariant="Dark">
     <Application.Resources>
         <converters:ResourceToGeometryConverter x:Key="ResourceToGeometryConverter" />
+        <ControlRecycling x:Key="ControlRecyclingKey" />
     </Application.Resources>
     
     <Application.DataTemplates>
@@ -14,7 +15,13 @@
     </Application.DataTemplates>
 
     <Application.Styles>
+        <DockFluentTheme />
         <styling:FluentAvaloniaTheme PreferUserAccentColor="True" />
-        <StyleInclude Source="avares://Bess/FluentIcons.axaml"></StyleInclude>
+        <!-- <StyleInclude Source="avares://Bess/FluentIcons.axaml"></StyleInclude> -->
+        <!-- <Style Selector="DockControl"> -->
+        <!--     <Setter Property="(ControlRecyclingDataTemplate.ControlRecycling)" -->
+        <!--             Value="{StaticResource ControlRecyclingKey}" /> -->
+        <!-- </Style> -->
     </Application.Styles>
+    
 </Application>

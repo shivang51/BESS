@@ -14,7 +14,7 @@ public class GateSketch: SceneEntity
 
     private const float Padding = 6;
     private const float Width = 120;
-    private const float HeaderHeight = 25;
+    private const float HeaderHeight = 20;
     private const float RowPadding = 2;
     private const float RowGap = 8;
     private const float BorderRadius = 4;
@@ -35,9 +35,9 @@ public class GateSketch: SceneEntity
     public override void Render()
     {
         SkRenderer.DrawMicaRoundRect(SkPosition, SkScale, BorderRadius, GetRIdColor());
-        SkRenderer.DrawMicaRoundRect(SkPosition, HeaderSize, new Vector4(BorderRadius, BorderRadius, 0, 0));
+        SkRenderer.DrawMicaRoundRect(SkPosition, HeaderSize, new Vector4(BorderRadius, BorderRadius, 0, 0), SKColors.MidnightBlue);
         
-        SkRenderer.DrawText(_name, GetHeaderTextPosition(), SKColors.White, 12);
+        SkRenderer.DrawText(_name, GetHeaderTextPosition(), SKColors.White, 11);
         
         foreach (var slot in _inputSlots)
         {

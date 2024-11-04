@@ -2,10 +2,11 @@ using System;
 using BessScene;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Dock.Model.Mvvm.Controls;
 
-namespace Bess.ViewModels.MainWindowViewModels;
+namespace Bess.ViewModels.MainPageViewModels;
 
-public partial class BessSceneViewModel: ViewModelBase
+public partial class BessSceneViewModel: Tool
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ZoomStr))]

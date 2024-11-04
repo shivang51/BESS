@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using Bess.Models.ComponentExplorer;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Dock.Model.Mvvm.Controls;
 
-namespace Bess.ViewModels.MainWindowViewModels;
+namespace Bess.ViewModels.MainPageViewModels;
 
-public partial class ComponentExplorerViewModel: ViewModelBase
+public partial class ComponentExplorerViewModel: Tool
 {
     public ObservableCollection<ComponentTreeNode> ComponentTree { get; } =
     [

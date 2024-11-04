@@ -21,14 +21,15 @@
                 <mainPageViews:MenuBar/>
             </StackPanel>
         </Border>
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,2,*,2,Auto">
-            <mainPageViews:ComponentExplorer Grid.Column="0" Width="300"/>
-            <GridSplitter Grid.Column="1"></GridSplitter>
-            <mainPageViews:BessSceneView Grid.Column="2" />
-            <GridSplitter Grid.Column="3"></GridSplitter>
-            <mainPageViews:ProjectExplorer Grid.Column="4" Width="300"/>
-        </Grid>
+        <!-- <Grid Grid.Row="1" ColumnDefinitions="Auto,2,*,2,Auto"> -->
+            <!-- <mainPageViews:ComponentExplorer Grid.Column="0" Width="300"/> -->
+            <!-- <GridSplitter Grid.Column="1"></GridSplitter> -->
+            <!-- <mainPageViews:BessSceneView Grid.Column="2" /> -->
+            <!-- <GridSplitter Grid.Column="3"></GridSplitter> -->
+            <!-- <mainPageViews:ProjectExplorer Grid.Column="4" Width="300"/> -->
+    <DockControl Grid.Row="1" x:Name="DockControl" Layout="{Binding Layout}" Margin="4"
+                 />
+        <!-- </Grid> -->
     </Grid>
-
 
 </Window>

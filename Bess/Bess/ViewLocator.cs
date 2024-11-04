@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Bess.ViewModels;
+using Dock.Model.Core;
 
 namespace Bess;
 
@@ -27,6 +28,6 @@ public class ViewLocator : IDataTemplate
 
     public bool Match(object? data)
     {
-        return data is ViewModelBase;
+        return data is ViewModelBase || data is IDockable;
     }
 }

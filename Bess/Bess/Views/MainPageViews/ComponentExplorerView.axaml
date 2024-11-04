@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:Bess.ViewModels.MainWindowViewModels"
+             xmlns:viewModels="clr-namespace:Bess.ViewModels.MainPageViewModels"
              xmlns:parentvm="clr-namespace:Bess.ViewModels"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="Bess.Views.MainPageViews.ComponentExplorer"
+             x:Class="Bess.Views.MainPageViews.ComponentExplorerView"
              x:DataType="viewModels:ComponentExplorerViewModel">
     
     <Design.DataContext>
