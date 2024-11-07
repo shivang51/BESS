@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:Bess.ViewModels.MainPageViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Bess.Views.MainPageViews.BessSceneView"
+             CornerRadius="32"
              x:DataType="viewModels:BessSceneViewModel">
     <Design.DataContext>
         <viewModels:BessSceneViewModel/>

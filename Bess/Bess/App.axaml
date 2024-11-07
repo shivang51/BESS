@@ -7,21 +7,52 @@
              RequestedThemeVariant="Dark">
     <Application.Resources>
         <converters:ResourceToGeometryConverter x:Key="ResourceToGeometryConverter" />
-        <ControlRecycling x:Key="ControlRecyclingKey" />
+        <!-- <ControlRecycling x:Key="ControlRecyclingKey" /> -->
+        <!-- <SolidColorBrush x:Key="SharedBackgroundBrush" Color="#282c26"/> -->
+        <SolidColorBrush x:Key="SharedBackgroundBrush" Color="{DynamicResource ThemeControlHighColor}"/>
+        
     </Application.Resources>
     
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
 
+    
     <Application.Styles>
-        <DockFluentTheme />
+        <DockSimpleTheme/>
         <styling:FluentAvaloniaTheme PreferUserAccentColor="True" />
-        <!-- <StyleInclude Source="avares://Bess/FluentIcons.axaml"></StyleInclude> -->
-        <!-- <Style Selector="DockControl"> -->
-        <!--     <Setter Property="(ControlRecyclingDataTemplate.ControlRecycling)" -->
-        <!--             Value="{StaticResource ControlRecyclingKey}" /> -->
-        <!-- </Style> -->
+        <StyleInclude Source="avares://Bess/FluentIcons.axaml"></StyleInclude>
+        <Style Selector="ToolTabStrip">
+            <Setter Property="Background" Value="Transparent"></Setter>
+            <Setter Property="CornerRadius" Value="0 0 4 4"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="1 0 1 1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource SliderTrackFill}"/>
+        </Style>
+        <Style Selector="ToolTabStripItem">
+            <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+            <Setter Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
+        
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+                <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
+            </Style>
+            <Style Selector="^:selected">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+            </Style>
+        </Style>
+        
+        <Style Selector="ProportionalStackPanelSplitter">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}"></Setter>
+        </Style>
+        
+        <Style Selector="ToolDockControl">
+            <Setter Property="Background" Value="{StaticResource SharedBackgroundBrush}"></Setter>
+            <!-- <Panel.Background> -->
+            <!--     <AcrylicBursh Property="" Value="{DynamicResource SystemAccentColor}"/> -->
+            <!-- </Panel.Background> -->
+        </Style>
     </Application.Styles>
     
 </Application>

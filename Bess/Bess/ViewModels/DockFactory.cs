@@ -15,6 +15,7 @@ public class DockFactory: Factory
     private IRootDock? _rootDock;
     private Tool? _componentExplorer;
     private Tool? _projectExplorer;
+    private Tool? _sceneView;
     public DockFactory()
     {
     }
@@ -81,27 +82,37 @@ public class DockFactory: Factory
             (
                 leftDock,
                 new ProportionalDockSplitter(),
-                sceneViewModel,
+                new ToolDock
+                {
+                    ActiveDockable = null,
+                    IsActive = true,
+                    IsCollapsable = false,
+                    CanFloat = false,
+                    CanClose = false,
+                    CanPin = false,
+                    Dock = DockMode.Center,
+                    GripMode = GripMode.Hidden,
+                    VisibleDockables = CreateList<IDockable>
+                    (
+                        sceneViewModel
+                    )
+                },
                 new ProportionalDockSplitter(),
                 rightDock
             )
         };
         
-        var windowLayout = CreateRootDock();
-        windowLayout.Title = "Default";
-        windowLayout.IsCollapsable = false;
-        windowLayout.VisibleDockables = CreateList<IDockable>(windowLayoutContent);
-        windowLayout.ActiveDockable = windowLayoutContent;
         
         var rootDock = CreateRootDock();
         rootDock.IsCollapsable = false;
-        rootDock.VisibleDockables = CreateList<IDockable>(windowLayout);
-        rootDock.ActiveDockable = windowLayout;
-        rootDock.DefaultDockable = windowLayout;
+        rootDock.VisibleDockables = CreateList<IDockable>(windowLayoutContent);
+        rootDock.ActiveDockable = windowLayoutContent;
+        rootDock.DefaultDockable = windowLayoutContent;
 
         _rootDock = rootDock;
         _componentExplorer = componentExplorerViewModel;
         _projectExplorer = projectExplorerViewModel;
+        _sceneView = sceneViewModel;
 
         return _rootDock;
     }
@@ -113,14 +124,16 @@ public class DockFactory: Factory
         ContextLocator = new Dictionary<string, Func<object?>>
         {
             ["ComponentExplorer"] = () => layout,
-            ["ProjectExplorer"] = () => layout
+            ["ProjectExplorer"] = () => layout,
+            ["Scene"] = () => layout
         };
 
         DockableLocator = new Dictionary<string, Func<IDockable?>>
         {
             ["Root"] = () => _rootDock,
             ["ComponentExplorer"] = () => _componentExplorer,
-            ["ProjectExplorer"] = () => _projectExplorer
+            ["ProjectExplorer"] = () => _projectExplorer,
+            ["Scene"] = () => _sceneView
         };
         
         HostWindowLocator = new Dictionary<string, Func<IHostWindow?>>

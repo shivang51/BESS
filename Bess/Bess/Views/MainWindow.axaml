@@ -8,6 +8,7 @@
         x:Class="Bess.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo-1024.png"
+        TransparencyLevelHint="AcrylicBlur"
         Title="Bess">
 
     <Design.DataContext>
